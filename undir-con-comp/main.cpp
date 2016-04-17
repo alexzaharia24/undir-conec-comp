@@ -11,52 +11,12 @@
 
 #include "UGraphCost.h"
 
-
 using namespace std;
 
-
-
-/* DFS - iterative */
-vector<int> DFS_it(int v, UGraph g) {
-	vector<int> visited;
-	vector<int> result;
-	stack<int> s;
-	for (int i = 0; i < g.getNoOfVertices(); i++) {
-		visited.push_back(0);
-	}
-	s.push(v);
-	while (!s.empty()) {
-		v = s.top();
-		s.pop();
-		if (visited[v] == 0) {
-			result.push_back(v);
-			visited[v] = 1;
-			for (int w : g.getNeighbors(v)) {
-				s.push(w);
-			}
-		}
-	}
-	return result;
-}
-
-
-/* DFS - recursive */
-vector<int> DFS_rec(int v, UGraph g, vector<int> visited) {
-	vector<int> result;
-	visited[v] = 1;
-	result.push_back(v);
-	for (int w : g.getNeighbors(v)) {
-		if (visited[w] == 0) {
-			DFS_rec(w, g, visited);
-		}
-	}
-	return result;
-}
-
 /* BFS */
-vector<int> BFS(int v, UGraph g) {
+vector<pair<int,int>> BFS(int v, UGraph g) {
 	/* v = root */
-	vector<int> result;
+	vector<pair<int, int>> result;
 	std::queue<int> Q;
 	struct info {
 		int distance;
@@ -64,12 +24,16 @@ vector<int> BFS(int v, UGraph g) {
 	};
 	vector<info> bsinfo;
 
+	if (g.getDegree(v) == 0) {
+		result.push_back(make_pair(v, v));
+		return result;
+	}
+
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		bsinfo.push_back(info());
 		bsinfo[i].distance = NULL;
 		bsinfo[i].parent = NULL;
 	}
-	
 	bsinfo[v].distance = 0;
 	Q.push(v);
 	while (!Q.empty()) {
@@ -80,38 +44,76 @@ vector<int> BFS(int v, UGraph g) {
 				bsinfo[n].distance = bsinfo[w].distance + 1;
 				bsinfo[n].parent = w;
 				Q.push(n);
+				result.push_back(make_pair(w, n));
 			}
 		}
-		result.push_back(w);
 	}
 	return result;
 }
 
 /* Connected components */
-vector<vector<int>> conComp(UGraph g) {
-	vector<vector<int>> result;
+vector<vector<pair<int,int>>> conComp(UGraph g) {
+	vector<vector<pair<int,int>>> result;
 	vector<int> visited;
-	vector<int> bfs;
+	vector<pair<int,int>> bfs;
+	vector<int> vertices;
 	int x = 0;
-	int n = 0;
+	int n = 1;
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		visited.push_back(0);
 	}
-	while (n != g.getNoOfVertices()) {
+	while (n < g.getNoOfVertices()) {
 		for (unsigned i = 0; i < visited.size(); ++i) {
 			if (visited[i] != 1) {
 				x = i;
 				break;
 			}
 		}
+		//visited show
+		/*for (auto v : visited) {
+			cout << v << " ";
+		}*/
+		//cout << "\n";
+		//cout << "x = " << x << "\n";
 		bfs = BFS(x, g);
-		for (unsigned i = 0; i < bfs.size(); ++i) {
-			visited[bfs[i]] = 1;
+		if (bfs.size() == 1) {
 			n++;
+		}
+		//cout << "bfs size " << bfs.size() << "\n";
+		vertices.push_back(x);
+		
+		//cout << "\n";
+		visited[x] = 1;
+		for (auto e : bfs) {
+			if (find(vertices.begin(), vertices.end(), e.first) == vertices.end() && e.first != x) {
+				vertices.push_back(e.first);
+			}
+			if (find(vertices.begin(), vertices.end(), e.second) == vertices.end() != e.second != x) {
+				vertices.push_back(e.second);
+			}
+		}
+		//cout << "bfs size " << bfs.size() << "\n";
+		/*cout << "vertices[" << 0 << "] = " << vertices[0] << "\n";*/
+
+		//cout << n << " ";
+		for (unsigned c = 1; c <= bfs.size(); ++c) {
+			//cout << "vertices[" << c << "] = " << vertices[c] << "\n";
+			visited[vertices[c]] = 1;
+			n++;
+			//cout << "n = "<< n << "\n";
+			//cout << "c = " << c << "\n";
+		}
+		//cout << "=======================\n";
+		/*for (auto v : vertices) {
+			cout << v << " ";
+		}*/
+		while (!vertices.empty()) {
+			vertices.pop_back();
 		}
 		result.push_back(bfs);
 
 	}
+	//cout << "\n\n";
 	return result;
 }
 
@@ -162,57 +164,29 @@ int executeCommand(string cmd, UGraph& g) {
 	}
 }
 
-
-void mainMenu() {
-	/* The main menu. Here we put all the other menus together. */
-	string cmd;
-	int gtype;
-	UGraph g = initialize();
-
-	vector<int> visited;
-	for (int i = 0; i < g.getNoOfVertices(); ++i) {
-		visited.push_back(0);
-	}
-	//vector<int> dfs = DFS_rec(0, g, visited);
-	vector<int> dfs = DFS_it(6, g);
-	for (vector<int>::iterator it = dfs.begin(); it != dfs.end(); ++it) {
-		cout << *it << " ";
-	}
-	cout << endl;
-	/*cout << "----DFS-----\n";
-
-	vector<vector<int>> con =  conComp(g);
-	for (unsigned i = 0; i < con.size(); ++i) {
-		for (unsigned j = 0; j < con[i].size(); ++j) {
-			cout << con[i][j] << " ";
-		}
-		cout << endl;
-	}*/
-
-	menuCommands();
-	do {
-		cout << "Enter command: \n> ";
-		cin >> cmd;
-	} while (!executeCommand(cmd, g));
-}
-
 void run() {
 	UGraph g = initialize();
 	vector<int> visited;
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		visited.push_back(0);
 	}
-	vector<int> bfs;
-	//bfs = BFS(0, g);
-	vector<vector<int>> comp = conComp(g);
+	vector<pair<int,int>> bfs;
+	//bfs = BFS(4, g);
+	vector<vector<pair<int,int>>> comp = conComp(g);
 	for (int i = 0; i < comp.size(); ++i) {
+		cout << "--" << i << "--" << "\n";
 		for (int j = 0; j < comp[i].size(); ++j) {
-			cout << comp[i][j] << " ";
+			if (comp[i][j].first == comp[i][j].second) {
+				cout << comp[i][j].first << "\n";
+			}
+			else {
+				cout << comp[i][j].first << " -> " << comp[i][j].second << "\n";
+			}
 		}
-		cout << "\n";
 	}
 	cout << "\n";
-	cout << "\n";
+
+	/*cout << "\n";
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		vector<int> neigh = g.getNeighbors(i);
 		if (neigh.size()) {
@@ -221,7 +195,7 @@ void run() {
 			}
 			cout << "-------\n";
 		}
-	}
+	}*/
 }
 
 int main() {
