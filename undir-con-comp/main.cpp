@@ -76,7 +76,7 @@ vector<int> BFS(int v, UGraph g) {
 		int w = Q.front();
 		Q.pop();
 		for (int n : g.getNeighbors(w)) {
-			if (bsinfo[n].distance == NULL) {
+			if (bsinfo[n].distance == NULL && n != v) {
 				bsinfo[n].distance = bsinfo[w].distance + 1;
 				bsinfo[n].parent = w;
 				Q.push(n);
@@ -91,7 +91,7 @@ vector<int> BFS(int v, UGraph g) {
 vector<vector<int>> conComp(UGraph g) {
 	vector<vector<int>> result;
 	vector<int> visited;
-	vector<int> dfs;
+	vector<int> bfs;
 	int x = 0;
 	int n = 0;
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
@@ -104,12 +104,12 @@ vector<vector<int>> conComp(UGraph g) {
 				break;
 			}
 		}
-		dfs = DFS_it(x, g);
-		for (unsigned i = 0; i < dfs.size(); ++i) {
-			visited[dfs[i]] = 1;
+		bfs = BFS(x, g);
+		for (unsigned i = 0; i < bfs.size(); ++i) {
+			visited[bfs[i]] = 1;
 			n++;
 		}
-		result.push_back(dfs);
+		result.push_back(bfs);
 
 	}
 	return result;
@@ -203,9 +203,13 @@ void run() {
 		visited.push_back(0);
 	}
 	vector<int> bfs;
-	bfs = BFS(0, g);
-	for (int i = 0; i < bfs.size(); ++i) {
-		cout << bfs[i] << " ";
+	//bfs = BFS(0, g);
+	vector<vector<int>> comp = conComp(g);
+	for (int i = 0; i < comp.size(); ++i) {
+		for (int j = 0; j < comp[i].size(); ++j) {
+			cout << comp[i][j] << " ";
+		}
+		cout << "\n";
 	}
 	cout << "\n";
 	cout << "\n";
