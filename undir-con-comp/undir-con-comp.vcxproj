@@ -110,7 +110,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ugraph.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="UGraph.cpp" />
+    <ClCompile Include="UGraphCost.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UGraph.h" />
+    <ClInclude Include="UGraphCost.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
