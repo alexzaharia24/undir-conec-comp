@@ -1,13 +1,9 @@
 #include <algorithm>
-#include <cstdio>
 #include <iostream>
 #include <fstream>
-#include <map>
-#include <string>
-#include <unordered_map>
 #include <vector>
-#include <stack>
 #include <queue>
+#include <set>
 
 #include "UGraphCost.h"
 
@@ -53,67 +49,59 @@ vector<pair<int,int>> BFS(int v, UGraph g) {
 
 /* Connected components */
 vector<vector<pair<int,int>>> conComp(UGraph g) {
-	vector<vector<pair<int,int>>> result;
+	vector<vector<pair<int, int>>> result;
+	set<int> vertices;
+	vector<pair<int, int>> bfs;
 	vector<int> visited;
-	vector<pair<int,int>> bfs;
-	vector<int> vertices;
-	int x = 0;
-	int n = 1;
+	int n = 0, x;
+
+	//Initialize visited vector
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		visited.push_back(0);
 	}
+	
 	while (n < g.getNoOfVertices()) {
-		for (unsigned i = 0; i < visited.size(); ++i) {
-			if (visited[i] != 1) {
+		//Get the first vertex that was not visited
+		for (int i = 0; i < visited.size(); ++i) {
+			if (visited[i] == 0) {
 				x = i;
 				break;
 			}
 		}
-		//visited show
-		/*for (auto v : visited) {
-			cout << v << " ";
-		}*/
-		//cout << "\n";
-		//cout << "x = " << x << "\n";
-		bfs = BFS(x, g);
-		if (bfs.size() == 1) {
-			n++;
-		}
-		//cout << "bfs size " << bfs.size() << "\n";
-		vertices.push_back(x);
 		
-		//cout << "\n";
-		visited[x] = 1;
-		for (auto e : bfs) {
-			if (find(vertices.begin(), vertices.end(), e.first) == vertices.end() && e.first != x) {
-				vertices.push_back(e.first);
-			}
-			if (find(vertices.begin(), vertices.end(), e.second) == vertices.end() != e.second != x) {
-				vertices.push_back(e.second);
-			}
+		bfs = BFS(x, g);
+		//Get vertices from edges returned by BFS
+		for (auto b : bfs) {
+			vertices.insert(b.first);
+			vertices.insert(b.second);
 		}
-		//cout << "bfs size " << bfs.size() << "\n";
-		/*cout << "vertices[" << 0 << "] = " << vertices[0] << "\n";*/
-
-		//cout << n << " ";
-		for (unsigned c = 1; c <= bfs.size(); ++c) {
-			//cout << "vertices[" << c << "] = " << vertices[c] << "\n";
-			visited[vertices[c]] = 1;
-			n++;
-			//cout << "n = "<< n << "\n";
-			//cout << "c = " << c << "\n";
-		}
-		//cout << "=======================\n";
 		/*for (auto v : vertices) {
 			cout << v << " ";
-		}*/
-		while (!vertices.empty()) {
-			vertices.pop_back();
 		}
-		result.push_back(bfs);
+*/
+		for (auto v : vertices) {
+			/*if (visited[v] == 0) {
+				visited[v] = 1;
+				n += 1;
+			}*/
+			visited[v] = 1;
+			n += 1;
+		}
 
+		/*for (auto v1: vertices) {
+			for (auto v2: vertices) {
+				if (v1 < v2) {
+					if (g.isEdge(v1, v2)) {
+						cout << v1<< " >>> " << v2 << "\n";
+					}
+				}
+				
+			}
+		}*/
+
+		result.push_back(bfs);
+		vertices.clear();
 	}
-	//cout << "\n\n";
 	return result;
 }
 
@@ -170,11 +158,23 @@ void run() {
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		visited.push_back(0);
 	}
-	vector<pair<int,int>> bfs;
-	//bfs = BFS(4, g);
+	//vector<pair<int,int>> bfs;
+	//bfs = BFS(0, g);
+	////print BFS
+	//for (auto b : bfs) {
+	//	if (b.first == b.second) {
+	//		cout << b.first << "\n";
+	//	}
+	//	else {
+	//		cout << b.first << " -> " << b.second << "\n";
+	//	}
+	//}
+	//cout << "-------\n";
+
 	vector<vector<pair<int,int>>> comp = conComp(g);
+	//Print connected components
 	for (int i = 0; i < comp.size(); ++i) {
-		cout << "--" << i << "--" << "\n";
+		cout << "-- " << i+1 << " --" << "\n";
 		for (int j = 0; j < comp[i].size(); ++j) {
 			if (comp[i][j].first == comp[i][j].second) {
 				cout << comp[i][j].first << "\n";
@@ -185,17 +185,6 @@ void run() {
 		}
 	}
 	cout << "\n";
-
-	/*cout << "\n";
-	for (int i = 0; i < g.getNoOfVertices(); ++i) {
-		vector<int> neigh = g.getNeighbors(i);
-		if (neigh.size()) {
-			for (int j = 0; j < neigh.size(); ++j) {
-				cout << i << " -> " << neigh[j] << "\n";
-			}
-			cout << "-------\n";
-		}
-	}*/
 }
 
 int main() {
