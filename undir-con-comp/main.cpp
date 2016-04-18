@@ -109,7 +109,6 @@ vector<vector<pair<int,int>>> conComp(UGraph g) {
 	return result;
 }
 
-/* ------- UI -------- */
 UGraph initialize() {
 	/*	Initialize the costless graph.
 			Output: (UGraph) - the initialized graph. */
