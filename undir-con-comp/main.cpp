@@ -10,42 +10,47 @@
 using namespace std;
 
 /* BFS */
-vector<pair<int,int>> BFS(int v, UGraph g) {
+vector<int> BFS(int v, UGraph g) {
 	/* Breadth-First-Search algorithm 
 		Input: v (int) - the root vertex
 			   g (UGraph) - the undirected graph. 
-		Output: result (vector<pair<int, int>>) - a vector of edges corresponding to the component. */
-	vector<pair<int, int>> result;
+		Output: result (vector<pair<int, int>>) - a vector of vertices corresponding to the component. */
+	vector<int> result;
 	std::queue<int> Q;
+
+	//Info for every vertex.
 	struct info {
 		int distance;
 		int parent;
 	};
 	vector<info> bsinfo;
 
-	if (g.getDegree(v) == 0) {
-		result.push_back(make_pair(v, v));
-		return result;
-	}
-
+	//Initialize the info. 
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		bsinfo.push_back(info());
 		bsinfo[i].distance = NULL;
 		bsinfo[i].parent = NULL;
 	}
+
+	//Set the root distance to 0.
 	bsinfo[v].distance = 0;
+	//Add the root to the queue.
 	Q.push(v);
+
 	while (!Q.empty()) {
+		//Keep extracting vertices from the queue.
 		int w = Q.front();
 		Q.pop();
+		//Loop through adiacent vertices.
 		for (int n : g.getNeighbors(w)) {
 			if (bsinfo[n].distance == NULL && n != v) {
+				//Set the distance and parent accordingly.
 				bsinfo[n].distance = bsinfo[w].distance + 1;
 				bsinfo[n].parent = w;
 				Q.push(n);
-				result.push_back(make_pair(w, n));
 			}
 		}
+		result.push_back(w);
 	}
 	return result;
 }
@@ -57,53 +62,49 @@ vector<vector<pair<int,int>>> conComp(UGraph g) {
 		Output: result (vector<vector<pair<int,int>>>) - connected components. */
 	vector<vector<pair<int, int>>> result;
 	set<int> vertices;
-	vector<pair<int, int>> bfs;
+	vector<int> bfs;
 	vector<int> visited;
-	int n = 0, x;
+	int total_visited = 0, current_root, comp_nr = 0;
 
 	//Initialize visited vector
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		visited.push_back(0);
 	}
-	
-	while (n < g.getNoOfVertices()) {
-		//Get the first vertex that was not visited
+	//Get the first vertex that was not visited
+	while (total_visited < g.getNoOfVertices()) {
 		for (int i = 0; i < visited.size(); ++i) {
 			if (visited[i] == 0) {
-				x = i;
+				current_root = i;
 				break;
 			}
 		}
-		
-		bfs = BFS(x, g);
-		//Get vertices from edges returned by BFS
+		//Get vertices from edges returned by BFS.
+		bfs = BFS(current_root, g);
 		for (auto b : bfs) {
-			vertices.insert(b.first);
-			vertices.insert(b.second);
+			vertices.insert(b);
 		}
-
+		//Mark the vertices from this component as visited.
 		for (auto v : vertices) {
-			if (visited[v] == 0) {
-				visited[v] = 1;
-				n += 1;
-			}
-			//visited[v] = 1;
-			//n += 1;
+			visited[v] = 1;
+			total_visited += 1;
 		}
-
-		/*for (auto v1: vertices) {
+		result.push_back(vector<pair<int,int>>());
+		//If there is only one vertex then make a pair of itself. 
+		if (bfs.size() == 1) {
+			result[comp_nr].push_back(make_pair(bfs[0], bfs[0]));
+		}
+		//Add all the possible edges to the result.
+		for (auto v1: vertices) {
 			for (auto v2: vertices) {
 				if (v1 < v2) {
 					if (g.isEdge(v1, v2)) {
-						cout << v1<< " >>> " << v2 << "\n";
+						result[comp_nr].push_back(make_pair(v1, v2));
 					}
 				}
-				
 			}
-		}*/
-
-		result.push_back(bfs);
-		//vertices.clear();
+		}
+		comp_nr++;
+		vertices.clear();
 	}
 	return result;
 }
