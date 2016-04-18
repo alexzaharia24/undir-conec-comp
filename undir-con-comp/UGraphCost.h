@@ -2,53 +2,6 @@
 #include <map>
 #include "UGraph.h"
 
-/* Connected components */
-//vector<vector<pair<int, int>>> conComp(UGraph g) {
-//	/* RECODE THIS IN THE MORNING */
-//	vector<vector<pair<int, int>>> result;
-//	vector<int> visited;
-//	vector<pair<int, int>> bfs;
-//	vector<int> vertices;
-//	int x = 0;
-//	int n = 1;
-//	for (int i = 0; i < g.getNoOfVertices(); ++i) {
-//		visited.push_back(0);
-//	}
-//	while (n < g.getNoOfVertices()) {
-//		for (unsigned i = 0; i < visited.size(); ++i) {
-//			if (visited[i] != 1) {
-//				x = i;
-//				break;
-//			}
-//		}
-//		bfs = BFS(x, g);
-//		cout << "bfs-size = " << bfs.size() << "\n";
-//		/*if (bfs.size() == 1) {
-//		n++;
-//		}*/
-//		vertices.push_back(x);
-//		visited[x] = 1;
-//		for (auto e : bfs) {
-//			if (find(vertices.begin(), vertices.end(), e.first) == vertices.end() && e.first != x) {
-//				vertices.push_back(e.first);
-//			}
-//			if (find(vertices.begin(), vertices.end(), e.second) == vertices.end() != e.second != x) {
-//				vertices.push_back(e.second);
-//			}
-//		}
-//		for (unsigned c = 1; c <= bfs.size(); ++c) {
-//			visited[vertices[c]] = 1;
-//			n++;
-//		}
-//		while (!vertices.empty()) {
-//			vertices.pop_back();
-//		}
-//		result.push_back(bfs);
-//
-//	}
-//	return result;
-//}
-
 /* ====== UGraphCost ======*/
 class UGraphCost : public UGraph {
 private:

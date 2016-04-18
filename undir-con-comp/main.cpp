@@ -11,7 +11,10 @@ using namespace std;
 
 /* BFS */
 vector<pair<int,int>> BFS(int v, UGraph g) {
-	/* v = root */
+	/* Breadth-First-Search algorithm 
+		Input: v (int) - the root vertex
+			   g (UGraph) - the undirected graph. 
+		Output: result (vector<pair<int, int>>) - a vector of edges corresponding to the component. */
 	vector<pair<int, int>> result;
 	std::queue<int> Q;
 	struct info {
@@ -49,6 +52,9 @@ vector<pair<int,int>> BFS(int v, UGraph g) {
 
 /* Connected components */
 vector<vector<pair<int,int>>> conComp(UGraph g) {
+	/* Finding the connected componentes based upon the BFS results. 
+		Input: g (UGraph) - the undirected graph. 
+		Output: result (vector<vector<pair<int,int>>>) - connected components. */
 	vector<vector<pair<int, int>>> result;
 	set<int> vertices;
 	vector<pair<int, int>> bfs;
@@ -75,17 +81,14 @@ vector<vector<pair<int,int>>> conComp(UGraph g) {
 			vertices.insert(b.first);
 			vertices.insert(b.second);
 		}
-		/*for (auto v : vertices) {
-			cout << v << " ";
-		}
-*/
+
 		for (auto v : vertices) {
-			/*if (visited[v] == 0) {
+			if (visited[v] == 0) {
 				visited[v] = 1;
 				n += 1;
-			}*/
-			visited[v] = 1;
-			n += 1;
+			}
+			//visited[v] = 1;
+			//n += 1;
 		}
 
 		/*for (auto v1: vertices) {
@@ -100,7 +103,7 @@ vector<vector<pair<int,int>>> conComp(UGraph g) {
 		}*/
 
 		result.push_back(bfs);
-		vertices.clear();
+		//vertices.clear();
 	}
 	return result;
 }
@@ -127,32 +130,10 @@ UGraph initialize() {
 	return g;
 }
 
-void menuCommands() {
-	/* Commands for the costless graph menu. */
-	cout << "+---------------+ \n";
-	cout << "| Menu commands | \n";
-	cout << "+---------------+ \n";
-}
-
-int executeCommand(string cmd, UGraph& g) {
-	/*	Execute the given command on the given costless graph.
-			Input:	cmd (string) - the command
-					g (UGraph&) - the costless graph.
-			Output: 1 - for command 'x'
-					0 - otherwise. */
-	if (cmd.compare("x") == 0) {
-		cout << ">> Exit \n";
-		cout << "\n";
-		return 1;
-	}
-	else {
-		cout << "> Wrong command. \n";
-		cout << "\n";
-		return 0;
-	}
-}
-
 void run() {
+	/* Running the connected components finder. 
+	We perform BFSs on every non-visited vertex and get its component. */
+
 	UGraph g = initialize();
 	vector<int> visited;
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
@@ -188,6 +169,7 @@ void run() {
 }
 
 int main() {
+	/* The main program. */
 
 	run();
 	system("pause");
