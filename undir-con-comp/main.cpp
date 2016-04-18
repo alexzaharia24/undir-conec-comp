@@ -124,7 +124,7 @@ UGraph initialize() {
 	f >> m;
 	UGraph g = UGraph{ n };
 
-	for (i = 0; i<m; i++) {
+	for (i = 0; i < m; i++) {
 		f >> a >> b;
 		g.addEdge(a, b);
 	}
@@ -140,18 +140,6 @@ void run() {
 	for (int i = 0; i < g.getNoOfVertices(); ++i) {
 		visited.push_back(0);
 	}
-	//vector<pair<int,int>> bfs;
-	//bfs = BFS(0, g);
-	////print BFS
-	//for (auto b : bfs) {
-	//	if (b.first == b.second) {
-	//		cout << b.first << "\n";
-	//	}
-	//	else {
-	//		cout << b.first << " -> " << b.second << "\n";
-	//	}
-	//}
-	//cout << "-------\n";
 
 	vector<vector<pair<int,int>>> comp = conComp(g);
 	//Print connected components
